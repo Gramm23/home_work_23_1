@@ -1,0 +1,69 @@
+{% extends 'product/base.html' %}
+
+{% block content %}
+
+    <section class="py-3 text-center container">
+        <div class="row py-lg-5">
+            <div class="col-lg-6 col-md-8 mx-auto">
+                <h1 class="fw-light">Онлайн витрина</h1>
+                <p class="lead text-body-secondary">Здесь Вы можете выбрать интересующий Вас продукт. Приятных
+                    покупок</p>
+            </div>
+        </div>
+    </section>
+
+    <div class="album py-5 bg-body-tertiary">
+        <div class="container">
+
+            <div class="row">
+                {% for object in object_list %}
+                    <div class="col-4 text-center py-3">
+                        <div class="text-center">
+                            <img src="{{ object.image.url }}" class="mx-auto"
+                                 style="width: 120px; height: 150px;" alt="{{ object.title }}">
+                        </div>
+                        <div class="card-body py-4">
+                            <h5 class="card-title">{{ object.title }}</h5>
+                        </div>
+                        <div class="card-body py-2">
+                            <p class="card-text">{{ object.description|truncatechars:65 }}</p>
+                        </div>
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item">Стоимость: {{ object.price }} &#8381;</li>
+                            <li class="list-group-item">{% if object.active %}
+                                Есть в наличии
+
+                                {% for pk, active in active_versions.items %}
+                                    {% if object.pk == pk %}
+                                        <li class="list-group-item">
+                                            <p>Активная версия: {{ active|title }}</p>
+                                        </li>
+                                    {% endif %}
+                                {% endfor %}
+
+
+                            {% else %}
+                                Нет в наличии
+                                <li class="list-group-item"> Нет активной версии</li>
+                            {% endif %}
+                        </ul>
+
+                        <div class="card-body mt-3">
+                            <a href="{% url 'product:view' object.pk %}" class="btn btn-outline-secondary">Подробнее</a>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            <div class="container py-5">
+                <div class="row">
+                    <div class="col-4"></div>
+                    <div class="col-4 text-center">
+                        <a href="{% url 'product:create' %}" class="btn btn-outline-secondary ">Добавить продукт</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+{% endblock %}

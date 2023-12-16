@@ -1,0 +1,43 @@
+{% extends 'product/base.html' %}
+{% load tags %}
+{% block content %}
+    <div class="album py-5 bg-body-tertiary">
+        <div class="container">
+            <div class="row">
+                <div class="col-8">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5>Материал "{{ object.title }}" ({{ object.slug }})</h5>
+                        </div>
+                        <div class="card-body">
+                            <p> Описание: {{ object.body }}</p>
+                        </div>
+                        <div class="card-footer">
+                            <p class="float-right">
+                                <a href="{% url 'materials:material_list' %}"
+                                   class="btn btn-outline-secondary">Вернуться</a>
+                            </p>
+                            <p class="float-right">
+                                Просмотры: {{ object.views_count }}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div class="card-body d-flex flex-column py-4">
+                        {% if object.image %}
+                            <img src="{% media_path material.image %}" alt="No photo" class="mx-auto"
+                                 style="height: 200px; width: 150px;"/>
+                        {% else %}
+                            <p class="text-center py-5">
+                                Здесь скоро <br>
+                                появится <br>
+                                изображение
+                            </p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

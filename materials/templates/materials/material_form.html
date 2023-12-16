@@ -1,0 +1,29 @@
+{% extends 'product/base.html' %}
+{% load crispy_forms_tags %}
+{% load crispy_forms_filters %}
+
+{% block content %}
+    <div class="album py-5 bg-body-tertiary">
+        <div class="container">
+            <div class="row">
+                <div class="col-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <form method="post">
+                                {% csrf_token %}
+                                {{ form|crispy }}
+                                <button type="submit" class="btn btn-success">
+                                    {% if object %}
+                                        Сохранить
+                                    {% else %}
+                                        Создать
+                                    {% endif %}
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

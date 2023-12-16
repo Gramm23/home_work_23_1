@@ -1,0 +1,37 @@
+{% extends 'product/base.html' %}
+
+{% block content %}
+
+    <section class="py-5 text-center container">
+        <div class="row py-lg-5">
+            <div class="col-lg-6 col-md-8 mx-auto">
+                <h3 class="fw-light">Описание продукта</h3>
+            </div>
+        </div>
+    </section>
+
+    <div class="album py-5 bg-body-tertiary">
+        <div class="container">
+
+            <div class="row">
+                <div class="col-6 d-flex flex-column align-items-center">
+                    <div style="margin-bottom: auto;">
+                        <img src="{{ object.image.url }}"
+                             style="width: 200px; height: 250px;" alt="{{ object.title }}">
+                    </div>
+                    <div class="mt-5 text-center">
+                        <a href="{% url 'product:index' %}" class="btn btn-outline-secondary">Вернуться</a>
+                        <a href="{% url 'product:edit' object.pk %}" class="btn btn-outline-warning">Редактировать</a>
+                        <a href="{% url 'product:delete' object.pk %}" class="btn btn-outline-danger">Удалить</a>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <h4>{{ object.title }}</h4><br>
+                    <p>{{ object.description }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+{% endblock %}

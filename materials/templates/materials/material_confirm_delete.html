@@ -1,0 +1,34 @@
+{% extends 'product/base.html' %}
+
+{% block content %}
+    <section class="py-2 text-center container">
+        <div class="row py-lg-5">
+            <div class="col-lg-6 col-md-8 mx-auto">
+                <h4>Удаление материала</h4>
+            </div>
+        </div>
+    </section>
+    <div class="album py-5 bg-body-tertiary">
+        <div class="container">
+            <div class="row">
+                <div class="col-6">
+                    <div class="card">
+                        <div class="card">
+                            <form method="post">
+                                {% csrf_token %}
+                                <div class="card-header">
+                                    <h6>Хотите удалить материал "{{ object.title }}"</h6>
+                                </div>
+                                <div class="card-body">
+                                    <button type="submit" class="btn btn-outline-danger">Подтвердить</button>
+                                    <a href="{% url 'materials:material_list' %}" class="btn btn-outline-warning">
+                                        Отменить</a>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
