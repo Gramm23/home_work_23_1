@@ -5,7 +5,7 @@ from django.db import models
 
 from product.models import NULLABLE
 
-code = ''.join([str(random.randint(0, 9)) for _ in range(12)])
+code = ''.join([str(random.randint(0, 9)) for _ in range(10)])
 
 
 class User(AbstractUser):
@@ -19,3 +19,10 @@ class User(AbstractUser):
 
     USERNAME_FIELD = "email"
     REQUIRED_FIELDS = []
+
+    def __str__(self):
+        return self.email
+
+    class Meta:
+        verbose_name = 'Пользователь'
+        verbose_name_plural = 'Пользователи'

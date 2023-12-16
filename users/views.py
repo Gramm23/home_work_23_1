@@ -1,5 +1,4 @@
 from django.conf import settings
-from django.contrib.auth import authenticate, login
 from django.core.mail import send_mail
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
