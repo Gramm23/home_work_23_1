@@ -156,7 +156,7 @@ EMAIL_HOST = 'smtp.mail.ru'  # SMTP-хост для Mail.ru
 EMAIL_PORT = 465  # Порт для SMTP-сервера Mail.ru
 EMAIL_USE_SSL = True
 EMAIL_HOST_USER = 'lapinofff@mail.ru'  # Ваш почтовый адрес на Mail.ru
-EMAIL_HOST_PASSWORD = 'C9K3aVrzsnqun3waZxn2'  # Пароль от вашего почтового ящика
+EMAIL_HOST_PASSWORD = os.getenv('SEND_MAIL_PASSWORD')  # Пароль от вашего почтового ящика
 
 
 
