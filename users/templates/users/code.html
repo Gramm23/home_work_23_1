@@ -1,0 +1,37 @@
+{% extends 'product/base.html' %}
+{% load crispy_forms_tags %}
+{% load crispy_forms_filters %}
+
+{% block content %}
+
+    <section class="py-2 text-center container">
+        <div class="row py-lg-5">
+            <div class="col-lg-6 col-md-8 mx-auto">
+                <h3 class="fw-light">На Ваш 'email' отправлен код для подтверждения регистрации</h3>
+            </div>
+        </div>
+    </section>
+
+    <div class="album py-5 bg-body-tertiary">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4">
+
+                </div>
+                <div class="col-md-4">
+                    <form method="post" novalidate class="my-custom-form">
+                        {% csrf_token %}
+                        {{ form|crispy }}
+                        <label for="code"></label>
+                        <input type="text" name="code" class="form-control" id="code" placeholder="Введите код"
+                               required>
+                        <br>
+                        <input type="submit" class="btn btn-outline-secondary form-control"
+                               value="Отправить">
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
