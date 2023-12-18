@@ -2,6 +2,9 @@ from django.forms import inlineformset_factory
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
+from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
+from django.http import Http404
 
 from product.forms import *
 from product.models import *
@@ -39,11 +42,17 @@ def contacts(request):
     return render(request, 'product/contacts.html', {'form': form})
 
 
+@method_decorator(login_required, name='dispatch')
 class ProductCreateView(CreateView):
     model = Product
     form_class = ProductForm
     template_name = 'product/product_form.html'
     success_url = reverse_lazy('product:index')
+
+    def dispatch(self, request, *args, **kwargs):
+        if not self.request.user.is_authenticated:
+            raise Http404("Вы не аутентифицированы")
+        return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context_data = super().get_context_data(**kwargs)
@@ -55,7 +64,9 @@ class ProductCreateView(CreateView):
         return context_data
 
     def form_valid(self, form):
+        form.instance.user = self.request.user  # Привязываем продукт к текущему пользователю
         self.object = form.save()
+
         formset = inlineformset_factory(Product, Version, form=VersionForm)(self.request.POST, instance=self.object)
         if formset.is_valid():
             formset.save()
@@ -64,6 +75,7 @@ class ProductCreateView(CreateView):
             return self.form_invalid(form)
 
 
+@method_decorator(login_required, name='dispatch')
 class ProductUpdateView(UpdateView):
     model = Product
     form_class = ProductForm
@@ -71,6 +83,12 @@ class ProductUpdateView(UpdateView):
 
     def get_success_url(self):
         return reverse_lazy('product:view', args=[self.object.pk])
+
+    def dispatch(self, request, *args, **kwargs):
+        obj = self.get_object()
+        if obj.user != self.request.user:
+            raise Http404("Вы не имеете права редактировать этот продукт")
+        return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context_data = super().get_context_data(**kwargs)
@@ -91,6 +109,13 @@ class ProductUpdateView(UpdateView):
             return self.form_invalid(form)
 
 
+@method_decorator(login_required, name='dispatch')
 class ProductDeleteView(DeleteView):
     model = Product
     success_url = reverse_lazy('product:index')
+
+    def dispatch(self, request, *args, **kwargs):
+        obj = self.get_object()
+        if obj.user != self.request.user:
+            raise Http404("Вы не имеете права удалять этот продукт")
+        return super().dispatch(request, *args, **kwargs)

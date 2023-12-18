@@ -22,8 +22,14 @@
                     <form method="post" novalidate class="my-custom-form">
                         {% csrf_token %}
                         {{ form|crispy }}
+                        <a type="submit" href="{% url 'users:password_reset_form' %}"
+                           class="no-underline">
+                            Забыли пароль?</a>
+                        <br>
+                        <br>
                         <button type="submit" class="btn btn-outline-secondary form-control">Войти
                         </button>
+
                     </form>
                 </div>
             </div>

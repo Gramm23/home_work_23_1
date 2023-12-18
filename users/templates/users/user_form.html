@@ -1,4 +1,5 @@
 {% extends 'product/base.html' %}
+{% load tags %}
 {% load crispy_forms_tags %}
 {% load crispy_forms_filters %}
 
@@ -7,7 +8,7 @@
     <section class="py-2 text-center container">
         <div class="row py-lg-5">
             <div class="col-lg-6 col-md-8 mx-auto">
-                <h2 class="fw-light">ПРОФИЛЬ</h2>
+                <h2 class="fw-light">ПРОФИЛЬ  {{ user }}</h2>
             </div>
         </div>
     </section>
@@ -25,6 +26,20 @@
                         <button type="submit" class="btn btn-outline-secondary form-control">Сохранить
                         </button>
                     </form>
+                    <br>
+                    <a class="btn btn-sm btn-outline-secondary form-control" href="{% url 'users:password_change' %}">
+                        Сменить пароль</a>
+                </div>
+                <div class="col-md-4">
+                    {% if user.avatar %}
+                            <img src="{% media_path users.image %}" alt="No photo" class="mx-auto"/>
+{#                                 style="height: 200px; width: 150px;"/>#}
+                        {% else %}
+                            <p class="text-center py-5">
+                                Загрузите <br>
+                                фото <br>
+                            </p>
+                        {% endif %}
                 </div>
             </div>
         </div>

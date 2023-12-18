@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.db import models
 
 NULLABLE = {
@@ -20,6 +21,8 @@ class Product(models.Model):
     )
 
     active = models.BooleanField(default=True, verbose_name="Наличие")
+
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, verbose_name='user', **NULLABLE)
 
     def __str__(self):
         return f"{self.title}"

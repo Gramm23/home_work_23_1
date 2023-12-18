@@ -111,11 +111,17 @@
             text-decoration: none;
         }
 
+
         hr {
             border: none;
             height: 4px; /* Высота линии */
             background-color: black; /* Цвет линии */
         }
+
+        .no-underline {
+            text-decoration: none;
+        }
+
 
     </style>
 
@@ -206,7 +212,8 @@
                     <ul class="list-unstyled">
                         <li><a href="{% url 'product:index' %}" class="text-white">Главная</a></li>
                         <li><a href="{% url 'materials:material_list' %}" class="text-white">Материалы</a></li>
-                        <li><a href="{% url 'product:contacts' %}" class="text-white">Контакты</a></li><br>
+                        <li><a href="{% url 'product:contacts' %}" class="text-white">Контакты</a></li>
+                        <br>
                         {% if user.is_authenticated %}
                             <li><a href="{% url 'users:profile' %}" class="text-white">Профиль</a></li>
                             <li><a href="{% url 'users:logout' %}" class="text-white">Выйти</a></li>
