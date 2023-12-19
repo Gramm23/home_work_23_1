@@ -1,10 +1,9 @@
 import random
 from django.conf import settings
-from django.contrib.auth import get_user_model
-from django.contrib.auth.views import PasswordChangeView, PasswordResetView
+from django.contrib.auth.views import PasswordChangeView
 from django.core.mail import send_mail
 from django.shortcuts import redirect, render
-from django.urls import reverse_lazy, reverse
+from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic import CreateView, UpdateView
 from django.contrib.auth.models import User
@@ -21,11 +20,11 @@ class RegisterView(CreateView):
     def form_valid(self, form):
         new_pass = ''.join([str(random.randint(0, 9)) for _ in range(9)])
         new_user = form.save(commit=False)
-        new_user.code = new_pass
+        new_user.ver_code = new_pass
         new_user.save()
         send_mail(
             subject='Подтверждение почты',
-            message=f'Код {new_user.code}',
+            message=f'Код {new_user.ver_code}',
             from_email=settings.EMAIL_HOST_USER,
             recipient_list=[new_user.email]
         )
@@ -42,12 +41,15 @@ class CodeView(View):
 
     def post(self, request):
         code = request.POST.get('code')
-        user = User.objects.filter(code=code).first()
+        user = User.objects.filter(ver_code=code).first()
 
-        if user is not None and user.code == code:
+        if user is not None:
             user.is_active = True
             user.save()
             return redirect('users:login')
+
+        else:
+            return redirect('users:code')
 
 
 class ProfileView(UpdateView):
@@ -63,7 +65,3 @@ class UserPasswordChange(PasswordChangeView):
     form_class = UserPasswordChangeForm
     success_url = reverse_lazy("users:password_change_done")
     template_name = "users/password_change_form.html"
-
-
-
-
