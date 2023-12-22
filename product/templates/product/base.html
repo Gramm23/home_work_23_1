@@ -122,6 +122,14 @@
             text-decoration: none;
         }
 
+        .green-text {
+            color: green;
+        }
+
+        .red-text {
+            color: red;
+        }
+
 
     </style>
 
@@ -202,24 +210,38 @@
         <div class="container">
             <div class="row">
                 <div class="col-sm-8 col-md-7 py-4">
-                    <h4>Добро пожаловать в наш интернет-магазин!</h4>
-                    <p class="text-body-secondary">Мы рады приветствовать вас на нашей виртуальной витрине, где вы
-                        найдете широкий ассортимент качественных товаров по доступным ценам. Наша цель - сделать ваше
-                        онлайн-пребывание в нашем магазине приятным и удобным. Спасибо, что выбрали нас!</p>
+                    {% if user.is_authenticated %}
+                        <h4>Добро пожаловать в наш интернет-магазин!</h4>
+                        <p class="text-body-secondary">Мы рады приветствовать вас на нашей виртуальной витрине, где вы
+                            найдете широкий ассортимент качественных товаров по доступным ценам. Наша цель - сделать
+                            ваше
+                            онлайн-пребывание в нашем магазине приятным и удобным. Спасибо, что выбрали нас!</p>
+                    {% else %}
+                        <h4>Добро пожаловать в наш интернет-магазин!</h4>
+                        <p class="text-body-secondary">Войдите под своей учетной записью или зарегистрируйтесь для
+                            дальнейшей работы на нашем сайте</p>
+                    {% endif %}
+
                 </div>
                 <div class="col-sm-4 offset-md-1 py-4">
                     <h4>Меню</h4>
                     <ul class="list-unstyled">
-                        <li><a href="{% url 'product:index' %}" class="text-white">Главная</a></li>
-                        <li><a href="{% url 'materials:material_list' %}" class="text-white">Материалы</a></li>
-                        <li><a href="{% url 'product:contacts' %}" class="text-white">Контакты</a></li>
-                        <br>
                         {% if user.is_authenticated %}
+                            <li><a href="{% url 'product:index' %}" class="text-white">Главная</a></li>
+                            <li><a href="{% url 'materials:material_list' %}" class="text-white">Материалы</a></li>
+                            <li><a href="{% url 'product:contacts' %}" class="text-white">Контакты</a></li>
+                            <br>
+
                             <li><a href="{% url 'users:profile' %}" class="text-white">Профиль</a></li>
                             <li><a href="{% url 'users:logout' %}" class="text-white">Выйти</a></li>
+                            {% if user.is_superuser %}
+                                <li><a href="http://127.0.0.1:8000/admin/" class="text-white">Админка</a></li>
+                            {% endif %}
                         {% else %}
                             <li><a href="{% url 'users:login' %}" class="text-white">Войти</a></li>
                             <li><a href="{% url 'users:register' %}" class="text-white">Регистрация</a></li>
+                            <br>
+
                         {% endif %}
                     </ul>
                 </div>

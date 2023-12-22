@@ -20,7 +20,7 @@ class Product(models.Model):
         "Category", on_delete=models.CASCADE, verbose_name="Категория"
     )
 
-    active = models.BooleanField(default=True, verbose_name="Наличие")
+    active = models.BooleanField(default=False, verbose_name="Наличие")
 
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, verbose_name='user', **NULLABLE)
 

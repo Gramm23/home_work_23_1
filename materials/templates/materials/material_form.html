@@ -23,6 +23,16 @@
                         </div>
                     </div>
                 </div>
+                <div class="col-md-4 p-5">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        {% if object.image %}
+                            <img src="{{ object.image.url }}" alt="photo" height="200" width="auto">
+                        {% else %}
+                            <p>Фото не загружено</p>
+                        {% endif %}
+                    </form>
+                </div>
             </div>
         </div>
     </div>

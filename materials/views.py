@@ -1,13 +1,12 @@
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 from django.urls import reverse_lazy, reverse
 from django.views.generic import ListView, CreateView, DetailView, UpdateView, DeleteView
 from pytils.translit import slugify
-from django.contrib.auth.decorators import login_required
-from django.utils.decorators import method_decorator
 from django.http import Http404
 from materials.models import Material
 
 
-class MaterialsListView(ListView):
+class MaterialsListView(LoginRequiredMixin, ListView):
     model = Material
 
 
@@ -21,19 +20,15 @@ class MaterialsDetailView(DetailView):
         return self.object
 
 
-@method_decorator(login_required, name='dispatch')
-class MaterialsCreateView(CreateView):
+class MaterialsCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
     model = Material
     fields = ('title', 'body', 'image')
     success_url = reverse_lazy('materials:material_list')
-
-    def dispatch(self, request, *args, **kwargs):
-        if not self.request.user.is_authenticated:
-            raise Http404("Вы не аутентифицированы")
-        return super().dispatch(request, *args, **kwargs)
+    permission_required = 'materials.add_material'
 
     def form_valid(self, form):
         form.instance.user = self.request.user
+        print(self.request.user)
         self.object = form.save()
         if form.is_valid():
             new_material = form.save()
@@ -42,39 +37,40 @@ class MaterialsCreateView(CreateView):
 
         return super().form_valid(form)
 
+    def test_func(self):
+        return not self.request.user.is_staff
 
-@method_decorator(login_required, name='dispatch')
-class MaterialsUpdateView(UpdateView):
+
+class MaterialsUpdateView(PermissionRequiredMixin, UpdateView):
     model = Material
-    fields = ('title', 'body', 'image',)
+    fields = ('title', 'body', 'image', 'is_publish',)
+    permission_required = 'materials.change_material'
 
-    def dispatch(self, request, *args, **kwargs):
-        obj = self.get_object()
-        if obj.user != self.request.user:
-            raise Http404("Вы не имеете права редактировать этот материал")
-        return super().dispatch(request, *args, **kwargs)
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class)
+        if not self.request.user.is_staff:
+            del form.fields['is_publish']
+        return form
 
     def form_valid(self, form):
-        form.instance.user = self.request.user
-        self.object = form.save()
         if form.is_valid():
             new_material = form.save()
             new_material.slug = slugify(new_material.title)
             new_material.save()
 
         return super().form_valid(form)
+
+    def get_object(self, queryset=None):
+        self.object = super().get_object(queryset)
+        if self.object.user != self.request.user and not self.request.user.is_staff:
+            raise Http404("Вы не являетесь владельцем этого товара")
+        return self.object
 
     def get_success_url(self):
         return reverse('materials:material_detail', args=(self.kwargs.get('pk'),))
 
 
-@method_decorator(login_required, name='dispatch')
-class MaterialsDeleteView(DeleteView):
+class MaterialsDeleteView(PermissionRequiredMixin, DeleteView):
     model = Material
     success_url = reverse_lazy('materials:material_list')
-
-    def dispatch(self, request, *args, **kwargs):
-        obj = self.get_object()
-        if obj.user != self.request.user:
-            raise Http404("Вы не имеете права удалять этот материал")
-        return super().dispatch(request, *args, **kwargs)
+    permission_required = 'materials.delete_material'

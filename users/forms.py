@@ -1,3 +1,4 @@
+from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm, PasswordChangeForm, PasswordResetForm, \
     AuthenticationForm
 from django import forms
@@ -14,7 +15,7 @@ class RegistrationForm(UserCreationForm):
 
 class UserProfileForm(UserChangeForm):
     class Meta:
-        model = User
+        model = get_user_model()
         fields = ('first_name', 'last_name', 'phone', 'avatar', 'country',)
 
     def __init__(self, *args, **kwargs):
