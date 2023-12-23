@@ -50,6 +50,9 @@ class MaterialsUpdateView(PermissionRequiredMixin, UpdateView):
         form = super().get_form(form_class)
         if not self.request.user.is_staff:
             del form.fields['is_publish']
+        else:
+            for field_name in ['title', 'image']:
+                del form.fields[field_name]
         return form
 
     def form_valid(self, form):
