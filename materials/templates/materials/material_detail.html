@@ -9,7 +9,8 @@
                         <div class="card-header">
                             <h5>Тема "{{ object.title }}"
                                 {% if user.is_authenticated %}
-                                    ({{ object.slug }})</h5>
+                                    ({{ object.slug }})
+                                    ({{ object.user }})</h5>
                                 {% endif %}
                         </div>
                         <div class="card-body">
@@ -20,14 +21,15 @@
                                 <a href="{% url 'materials:material_list' %}"
                                    class="btn btn-sm btn-outline-secondary">Вернуться</a>
                                 {% if user.is_authenticated %}
-                                    {% if perms.materials.change_material %}
-                                        <a href="{% url 'materials:material_edit' object.pk %}" type="button"
-                                           class="btn btn-sm btn-outline-warning">Редактирование</a>
-                                    {% endif %}
-                                    {% if perms.materials.delete_material %}
+
+                                    <a href="{% url 'materials:material_edit' object.pk %}" type="button"
+                                       class="btn btn-sm btn-outline-warning">Редактирование</a>
+
+                                    {% if user.is_superuser %}
                                         <a href="{% url 'materials:material_delete' object.pk %}" type="button"
                                            class="btn btn-sm btn-outline-danger">Удалить</a>
                                     {% endif %}
+
                                 {% endif %}
                             </p>
                             <p class="float-right">

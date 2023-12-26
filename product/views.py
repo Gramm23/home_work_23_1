@@ -8,6 +8,7 @@ from django.contrib.auth.decorators import login_required
 
 from product.forms import *
 from product.models import *
+from users.models import User
 
 
 class ProductListView(LoginRequiredMixin, ListView):
@@ -89,11 +90,10 @@ class ProductCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateView)
         return not self.request.user.is_staff
 
 
-class ProductUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
+class ProductUpdateView(LoginRequiredMixin, UpdateView):
     model = Product
     form_class = ProductForm
     template_name = 'product/product_form.html'
-    permission_required = 'product.change_product'
 
     def get_success_url(self):
         return reverse_lazy('product:view', args=[self.object.pk])
@@ -102,10 +102,13 @@ class ProductUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView)
         form = super().get_form(form_class)
         if not self.request.user.is_staff:
             del form.fields['active']
+            return form
+        elif self.request.user.is_superuser:
+            return form
         else:
             for field_name in ['title', 'image', 'price']:
                 del form.fields[field_name]
-        return form
+            return form
 
     def get_context_data(self, **kwargs):
         context_data = super().get_context_data(**kwargs)
@@ -118,9 +121,14 @@ class ProductUpdateView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView)
 
     def get_object(self, queryset=None):
         self.object = super().get_object(queryset)
-        if self.object.user != self.request.user and not self.request.user.is_staff:
+        staff_list = User.objects.filter(is_staff=True)
+        if self.request.user in staff_list:
+            return self.object
+        elif self.request.user == self.object.user:
+            return self.object
+        else:
             raise Http404("Вы не являетесь владельцем этого товара")
-        return self.object
+
 
     def form_valid(self, form):
         formset = self.get_context_data()['formset']

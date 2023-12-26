@@ -22,6 +22,8 @@ class Product(models.Model):
 
     active = models.BooleanField(default=False, verbose_name="Наличие")
 
+    is_staff = models.BooleanField(default=False, verbose_name="Модератор")
+
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, verbose_name='user', **NULLABLE)
 
     def __str__(self):

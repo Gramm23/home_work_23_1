@@ -4,6 +4,7 @@ from django.views.generic import ListView, CreateView, DetailView, UpdateView, D
 from pytils.translit import slugify
 from django.http import Http404
 from materials.models import Material
+from users.models import User
 
 
 class MaterialsListView(LoginRequiredMixin, ListView):
@@ -41,10 +42,9 @@ class MaterialsCreateView(LoginRequiredMixin, PermissionRequiredMixin, CreateVie
         return not self.request.user.is_staff
 
 
-class MaterialsUpdateView(PermissionRequiredMixin, UpdateView):
+class MaterialsUpdateView(LoginRequiredMixin, UpdateView):
     model = Material
     fields = ('title', 'body', 'image', 'is_publish',)
-    permission_required = 'materials.change_material'
 
     def get_form(self, form_class=None):
         form = super().get_form(form_class)
@@ -65,9 +65,13 @@ class MaterialsUpdateView(PermissionRequiredMixin, UpdateView):
 
     def get_object(self, queryset=None):
         self.object = super().get_object(queryset)
-        if self.object.user != self.request.user and not self.request.user.is_staff:
+        staff_list = User.objects.filter(is_staff=True)
+        if self.request.user in staff_list:
+            return self.object
+        elif self.request.user == self.object.user:
+            return self.object
+        else:
             raise Http404("Вы не являетесь владельцем этого товара")
-        return self.object
 
     def get_success_url(self):
         return reverse('materials:material_detail', args=(self.kwargs.get('pk'),))
